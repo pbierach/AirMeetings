@@ -1,6 +1,8 @@
 from _curses import flash
 from datetime import date
 
+from flask import render_template
+
 from app import app, db
 from app.models import User, Location, Space, meetingHistory, upcomingMeeting, reviews, Tech, TechToSpace
 
