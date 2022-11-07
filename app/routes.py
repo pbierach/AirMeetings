@@ -10,11 +10,11 @@ from app.models import User, Location, Space, meetingHistory, upcomingMeeting, r
 @app.route('/')
 @app.route('/home')
 def home():
-    return 'Hello world!'
+    return render_template('home.html', title="Home")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return 'login right now'
+    return render_template('home.html', title="Home")
 
 
 @app.route('/reset_db')
@@ -26,7 +26,7 @@ def reset_db():
         # print('Clear table {}'.format(table))
         db.session.execute(table.delete())
     db.session.commit()
-    return render_template('index.html', title="Home")
+    return render_template('home.html', title="Home")
 
 
 @app.route('/populate_db')
@@ -229,4 +229,4 @@ def populate_db():
     db.session.add_all([TS1, TS2, TS3, TS4, TS5, TS6, TS7, TS8, TS9, TS10, TS11, TS12, TS13, TS14, TS15, TS16])
     db.session.commit()
 
-    return render_template('index.html', title="Home")
+    return render_template('home.html', title="Home")
