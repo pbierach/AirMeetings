@@ -14,7 +14,7 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('home.html', title="Home")
+    return render_template('login.html', title="Home")
 
 
 @app.route('/reset_db')
