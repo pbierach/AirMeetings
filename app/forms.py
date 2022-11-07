@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, DateField, SelectMultipleField, SelectField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, TextAreaField, DateField,\
+    SelectMultipleField, SelectField, IntegerRangeField, RadioField
+from wtforms.validators import DataRequired, NumberRange
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
@@ -39,6 +40,22 @@ class HomeSearch(FlaskForm):
     zipcode = StringField('Zipcode', validators=[DataRequired()])
     date = DateField('Date', format='%Y-%m-%d')
     time = StringField('Time', validators=[DataRequired()])
-    cost = StringField('Cost', validators=[DataRequired()])
+    price = RadioField('Price', choices=[(0, 'Free'), (1, '$$$')], validators=[DataRequired()])
     submit = SubmitField('Search')
 
+    def validate_zipcode(self, zipcode):
+        if len(zipcode) != 5:
+            raise ValidationError("Please enter a 5 digit zipcode.")
+
+
+class FullSearch(FlaskForm):
+    zipcode = StringField('Zipcode', validators=[DataRequired()])
+    date = DateField('Date', format='%Y-%m-%d')
+    time = StringField('Time', validators=[DataRequired()])
+    price = RadioField('Price', choices=[(0, 'Free'), (1, '$$$')], validators=[DataRequired()])
+    submit = SubmitField('Search')
+    tech = SelectField('Technology', choices=Tech.query.filter_by(Tech.name).all())
+    groupSize = IntegerRangeField('Group Size', [NumberRange(min=1, max=100)])
+    def validate_zipcode(self, zipcode):
+        if len(zipcode) != 5:
+            raise ValidationError("Please enter a 5 digit zipcode.")

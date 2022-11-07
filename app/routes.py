@@ -12,6 +12,10 @@ from app.models import User, Location, Space, meetingHistory, upcomingMeeting, r
 def home():
     return 'Hello world!'
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return 'login right now'
+
 
 @app.route('/reset_db')
 def reset_db():
@@ -64,7 +68,7 @@ def populate_db():
                )
     S4 = Space(name="CNS 112",
                sizeCap=100,
-               hourlyRate=20,
+               hourlyRate=0,
                location=L3.id
                )
     S5 = Space(name="CNS 200",
