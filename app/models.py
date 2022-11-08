@@ -1,4 +1,6 @@
-from app import db
+from app import db, login
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # IMPLEMENT LOGIN, PASSWORD_HASHING
@@ -11,6 +13,10 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User> {}'.format(self.name)
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 class Location(db.Model):

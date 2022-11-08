@@ -54,7 +54,7 @@ class FullSearch(FlaskForm):
     time = StringField('Time', validators=[DataRequired()])
     price = RadioField('Price', choices=[(0, 'Free'), (1, '$$$')], validators=[DataRequired()])
     submit = SubmitField('Search')
-    tech = SelectField('Technology', choices=Tech.query.filter_by(Tech.name).all())
+    #tech = SelectField('Technology', choices=Tech.query.filter_by(Tech.name).all())
     groupSize = IntegerRangeField('Group Size', [NumberRange(min=1, max=100)])
     def validate_zipcode(self, zipcode):
         if len(zipcode) != 5:
