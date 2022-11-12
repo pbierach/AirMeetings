@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hello, {{ user.name }}!</h1>
+    {% if meetings|length != 0 %}
+        {% for i in range(meetings|length) %}
+            {% set space = meetings[i]["space"] %}
+            {% set location = meetings[i]["location"] %}
+            {{"Meeting at " + location.name + " in " }}
+            <a href="{{ url_for('space',space=space,location=location) }}">{{ space.name }}</a>
+            {{ " on " + meetings[i]["date"].strftime("%m/%d/%y") + " from " +
+            meetings[i]["start"].strftime('%H:%M') + " until " + meetings[i]["end"].strftime('%H:%M')}}
+            <br>
+        {% endfor %}
+    {% else %}
+        <p>No upcoming meetings</p>
+    {% endif %}
+
+{% endblock %}

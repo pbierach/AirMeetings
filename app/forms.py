@@ -2,22 +2,22 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, DateField,\
     SelectMultipleField, SelectField, IntegerRangeField, RadioField
 from wtforms.validators import DataRequired, NumberRange
-
-from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-
 from app.models import User, Location, Space, meetingHistory, upcomingMeeting, reviews, Tech, TechToSpace
 
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
 
 class RegistrationForm(FlaskForm):
+    fullName = StringField('Full name', validators=[DataRequired()])
+    guest = RadioField('Looking to search or post meeting spaces?',
+                       coerce=bool,
+                       validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -54,7 +54,7 @@ class FullSearch(FlaskForm):
     time = StringField('Time', validators=[DataRequired()])
     price = RadioField('Price', choices=[(0, 'Free'), (1, '$$$')], validators=[DataRequired()])
     submit = SubmitField('Search')
-    #tech = SelectField('Technology', choices=Tech.query.filter_by(Tech.name).all())
+    tech = SelectField('Technology', choices=[])
     groupSize = IntegerRangeField('Group Size', [NumberRange(min=1, max=100)])
     def validate_zipcode(self, zipcode):
         if len(zipcode) != 5:
