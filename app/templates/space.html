@@ -21,5 +21,16 @@
         <p>No one has reviewed this space yet!</p>
     {% endif %}
     </div>
+    <div id="tech">
+    <h3>Available Technology:</h3>
+    {% if tech|length != 0 %}
+        {% for i in range(tech|length) %}
+            <p>{{ tech[i]["tech"][0].name }} : {{ tech[i]["count"][0].count }} </p>
+        {% endfor %}
+    {% else %}
+        <p>This room has no relevant technology.</p>
+    {% endif %}
+
+    </div>
 
 {% endblock %}

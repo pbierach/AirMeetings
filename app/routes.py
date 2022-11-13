@@ -82,10 +82,10 @@ def space(space):
     r = reviews.query.filter_by(spid=space.id).all()
     tech = TechToSpace.query.filter_by(spid=space.id).all()
     techInSpace = []
-    for t in techInSpace:
+    for t in tech:
         curr = {
-            "tech": Tech.query.filter_by(id=t.id),
-            "count": TechToSpace.query.with_entities(TechToSpace.count).filter_by(tid=t.id, spid=space.id)
+            "tech": Tech.query.filter_by(id=t.tid).all(),
+            "count": TechToSpace.query.filter_by(tid=t.tid, spid=space.id).all()
         }
         techInSpace.append(curr)
 
