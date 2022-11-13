@@ -50,7 +50,9 @@ def register():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     upcoming = upcomingMeeting.query.filter_by(uid=user.id)
-    meetings = []
+    history = meetingHistory.query.filter_by(uid=user.id)
+    uMeetings = []
+    pMeetings = []
     for meet in upcoming:
         curr = {
             "space": Space.query.filter_by(id=meet.spid).first(),
@@ -59,15 +61,35 @@ def user(username):
             "start": meet.startTime,
             "end": meet.endTime
         }
-        meetings.append(curr)
+        uMeetings.append(curr)
 
-    return render_template('user.html', user=user, meetings=meetings)
+    for meet in history:
+        curr = {
+            "space": Space.query.filter_by(id=meet.spid).first(),
+            "location": Location.query.filter_by(id=Space.location).first(),
+            "date": meet.date,
+            "start": meet.startTime,
+            "end": meet.endTime
+        }
+        pMeetings.append(curr)
+
+    return render_template('user.html', user=user, meetings=uMeetings, history=pMeetings)
 
 @app.route('/space/<space>')
 def space(space):
     space = Space.query.filter_by(name=space).first_or_404()
     location = Location.query.filter_by(id=space.location).first_or_404()
-    return render_template('space.html', space=space, location=location)
+    r = reviews.query.filter_by(spid=space.id).all()
+    tech = TechToSpace.query.filter_by(spid=space.id).all()
+    techInSpace = []
+    for t in techInSpace:
+        curr = {
+            "tech": Tech.query.filter_by(id=t.id),
+            "count": TechToSpace.query.with_entities(TechToSpace.count).filter_by(tid=t.id, spid=space.id)
+        }
+        techInSpace.append(curr)
+
+    return render_template('space.html', space=space, location=location, reviews=r, tech=techInSpace)
 
 @app.route('/spaces')
 def spaces():
@@ -76,7 +98,7 @@ def spaces():
     for space in spaces:
         l = Location.query.filter_by(id=space.location).first_or_404()
         locations.append(l)
-    return render_template('listings.html', spaces=spaces, locations=l)
+    return render_template('listings.html', spaces=spaces)
 
 
 def reset_db():

@@ -2,6 +2,24 @@
 
 {% block content %}
     <h1>{{ space.name }}</h1>
+    <h3> {{ space.description }}</h3>
     <h3 style="display:inline">Located at:</h3>
     <p style="display:inline">{{ location.name }} in {{ location.city }}, {{ location.state }} {{ location.zip }}</p>
+    <div id="reviews">
+    <h3>Reviews:</h3>
+        {% if reviews|length != 0 %}
+            {% set total = namespace(value=0) %}
+            {% set count = namespace(value=0) %}
+        {% for i in range(reviews|length) %}
+            {% set total.value = total.value + reviews[i].score %}
+            {% set count.value = i %}
+            <p>{{ reviews[i].score }} : {{ reviews[i].desc }} </p>
+        {% endfor %}
+            {% set count.value = count.value + 1 %}
+            <p>Average Review Score: {{ total.value / count.value }}</p>
+    {% else %}
+        <p>No one has reviewed this space yet!</p>
+    {% endif %}
+    </div>
+
 {% endblock %}

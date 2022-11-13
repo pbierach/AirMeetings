@@ -6,6 +6,7 @@
     <body>
     <div>
         <a href={{ url_for('home') }}>Air Meetings:</a>
+        <a href={{ url_for('spaces') }} >Listings</a>
         {% if current_user.is_anonymous %}
             <a href={{ url_for('login') }}>Login</a>
         {% else %}

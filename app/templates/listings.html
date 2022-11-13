@@ -3,6 +3,6 @@
 {% block content %}
     <h1> Spaces </h1>
    {% for space in spaces %}
-       <a href="{{ url_for('space', space=space,location=space.location) }}">{{ space.name}}</a> <br>
+       <a href="{{ url_for('space', space=space.name) }}">{{ space.name}}</a> <br>
    {% endfor %}
 {% endblock %}
