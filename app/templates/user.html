@@ -7,7 +7,7 @@
             {% set space = meetings[i]["space"] %}
             {% set location = meetings[i]["location"] %}
             {{"Meeting at " + location.name + " in " }}
-            <a href="{{ url_for('space',space=space,location=location) }}">{{ space.name }}</a>
+            <a href="{{ url_for('space', space=space.name) }}">{{ space.name }}</a>
             {{ " on " + meetings[i]["date"].strftime("%m/%d/%y") + " from " +
             meetings[i]["start"].strftime('%H:%M') + " until " + meetings[i]["end"].strftime('%H:%M')}}
             <br>
