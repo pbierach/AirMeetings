@@ -1,10 +1,13 @@
 from datetime import date, time
+from flask_sqlalchemy import session
+import sqlalchemy.orm
 from flask import render_template, flash, redirect, url_for
 
 from app import app, db
 from app.models import User, Location, Space, meetingHistory, upcomingMeeting, reviews, Tech, TechToSpace
 from app.forms import LoginForm, RegistrationForm, HomeSearch, FullSearch
 from flask_login import current_user, login_user, logout_user, login_required
+
 
 @app.route('/')
 @app.route('/home')
@@ -74,6 +77,41 @@ def user(username):
         pMeetings.append(curr)
 
     return render_template('user.html', user=user, meetings=uMeetings, history=pMeetings)
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    form = FullSearch()
+    form.price.choices = [(True, 'Free'), (False, '$$$')]
+    technology = []
+    for t in Tech.query.all():
+        technology.append((t.id, t.name))
+    form.tech.choices = technology
+
+    if form.validate_on_submit():
+        zip = form.zipcode.data
+        date = form.date.data
+        tech = form.tech.data
+        gSize = form.groupSize.data
+        free = form.price.data
+        if free == "True":
+            paying = True
+        else:
+            paying = False
+        if paying:
+            spaces = db.session.query(Space).filter(Space.hourlyRate == 0, Space.sizeCap >= gSize)\
+                .join(Location).filter(Location.zip == zip)\
+                .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech))
+            return results(spaces)
+        else:
+            spaces = db.session.query(Space).filter(Space.hourlyRate >= 1, Space.sizeCap >= gSize)\
+                .join(Location).filter(Location.zip == zip)\
+                .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech))
+        return results(spaces)
+    return render_template('search.html', title='Search', form=form)
+
+@app.route("/search_results")
+def results(spaces):
+    return render_template("searchResults.html", title="Results", spaces=spaces)
 
 @app.route('/space/<space>')
 def space(space):
