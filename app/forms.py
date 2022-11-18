@@ -59,8 +59,8 @@ class FullSearch(FlaskForm):
 
 class Booking(FlaskForm):
     date = DateField('Date', format='%Y-%m-%d')
-    space = SelectField('Space', validators=[DataRequired()])
     #time = TimeField('Time', validators=[DataRequired()])
-    tech = SelectMultipleField('Technology', coerce=int, choices=[])
     groupSize = IntegerRangeField('Group Size', [NumberRange(min=1, max=100)])
     submit = SubmitField('Book')
+
+

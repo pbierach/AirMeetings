@@ -83,28 +83,35 @@ def user(username):
     return render_template('user.html', user=user, meetings=uMeetings, history=pMeetings)
 
 
-@app.route('/booking', methods=['GET', 'POST'])
-def book():
+@app.route('/booking/<space>', methods=['GET', 'POST'])
+def book(space):
+    space = Space.query.filter_by(name=space).first()
+    tech = TechToSpace.query.filter_by(spid=space.id).all()
+    techInSpace = []
+    for t in tech:
+        curr = {
+            "tech": Tech.query.filter_by(id=t.tid).all(),
+            "count": TechToSpace.query.filter_by(tid=t.tid, spid=space.id).all()
+        }
+        techInSpace.append(curr)
+    upcoming = upcomingMeeting.query.filter_by(spid=space.id)
     form = Booking()
-    technology = []
-    for t in Tech.query.all():
-        technology.append((t.id, t.name))
-    form.tech.choices = technology
-
-    spaces = []
-    for s in Space.query.all():
-        spaces.append((s.id, s.name))
-    form.space.choices = spaces
-
-    return render_template('booking.html', title='Search', form=form)
+    form.space = space
+    form.upcoming = upcoming
+    if form.validate_on_submit():
+        flash("You've booked: {}".format(space.name))
+        confirm = upcomingMeeting(uid=current_user.id, spid=space.id, date=form.date.data, startTime=time(10, 00), endTime=time(11, 30))
+        db.session.add(confirm)
+        db.session.commit()
+        return redirect(url_for('user', username=current_user.username))
+    return render_template('booking.html', title='Search', form=form, space=space, tech=techInSpace)
 
 
 @app.route('/confirm', methods=['GET', 'POST'])
 def confirm():
     form = Booking()
     if form.validate_on_submit():
-        flash("You've booked: {}".format(
-            form.space.data))
+
         confirmed = Booking(date=form.date.data,
                             space=form.space.data,
                             tech=form.tech.data,
