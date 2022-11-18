@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Book</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.date.label }}<br>
+            {{ form.date(size=32) }}<br>
+        </p>
+        <p>
+            {{ form.space.label }}
+            {{ form.space }}
+        </p>
+        <p>
+            {{ form.tech.label }}
+            {{ form.tech }}
+        </p>
+
+        <p>
+            {{ form.groupSize.label }}
+            {{ form.groupSize }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+
+{% endblock %}

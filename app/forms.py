@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, DateField,\
-    SelectMultipleField, SelectField, IntegerRangeField, RadioField, TimeField
+from wtforms import StringField, SubmitField, TextAreaField, DateField, SelectMultipleField, SelectField, IntegerRangeField, RadioField, TimeField
 from wtforms.validators import DataRequired, NumberRange
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
@@ -57,3 +56,11 @@ class FullSearch(FlaskForm):
     groupSize = IntegerRangeField('Group Size', [NumberRange(min=1, max=100)])
     submit = SubmitField('Search')
 
+
+class Booking(FlaskForm):
+    date = DateField('Date', format='%Y-%m-%d')
+    space = SelectField('Space', validators=[DataRequired()])
+    #time = TimeField('Time', validators=[DataRequired()])
+    tech = SelectMultipleField('Technology', coerce=int, choices=[])
+    groupSize = IntegerRangeField('Group Size', [NumberRange(min=1, max=100)])
+    submit = SubmitField('Book')

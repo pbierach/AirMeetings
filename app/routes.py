@@ -5,7 +5,7 @@ from flask import render_template, flash, redirect, url_for
 
 from app import app, db
 from app.models import User, Location, Space, meetingHistory, upcomingMeeting, reviews, Tech, TechToSpace
-from app.forms import LoginForm, RegistrationForm, HomeSearch, FullSearch
+from app.forms import LoginForm, RegistrationForm, HomeSearch, FullSearch, Booking
 from flask_login import current_user, login_user, logout_user, login_required
 
 
@@ -13,6 +13,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 @app.route('/home')
 def home():
     return render_template('home.html', title="Home")
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -28,18 +29,20 @@ def login():
         return redirect(url_for('home'))
     return render_template('login.html', title='Sign In', form=form)
 
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegistrationForm()
-    form.guest.choices=[(True, 'User'), (False, 'Host')]
+    form.guest.choices = [(True, 'User'), (False, 'Host')]
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data, name=form.fullName.data, guest=form.guest.data)
         user.set_password(form.password.data)
@@ -48,6 +51,7 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
+
 
 @app.route('/user/<username>')
 def user(username):
@@ -78,6 +82,42 @@ def user(username):
 
     return render_template('user.html', user=user, meetings=uMeetings, history=pMeetings)
 
+
+@app.route('/booking', methods=['GET', 'POST'])
+def book():
+    form = Booking()
+    technology = []
+    for t in Tech.query.all():
+        technology.append((t.id, t.name))
+    form.tech.choices = technology
+
+    spaces = []
+    for s in Space.query.all():
+        spaces.append((s.id, s.name))
+    form.space.choices = spaces
+
+    return render_template('booking.html', title='Search', form=form)
+
+
+@app.route('/confirm', methods=['GET', 'POST'])
+def confirm():
+    form = Booking()
+    if form.validate_on_submit():
+        flash("You've booked: {}".format(
+            form.space.data))
+        confirmed = Booking(date=form.date.data,
+                            space=form.space.data,
+                            tech=form.tech.data,
+                            groupSize=form.groupSize.data)
+        db.session.add(confirmed)
+        db.session.commit()
+        return redirect(url_for('confirm', date=form.date.data,
+                                space=form.space.data,
+                                tech=form.tech.data,
+                                groupSize=form.groupSize.data))
+    return render_template('booking.html', form=form)
+
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     form = FullSearch()
@@ -98,20 +138,22 @@ def search():
         else:
             paying = False
         if paying:
-            spaces = db.session.query(Space).filter(Space.hourlyRate == 0, Space.sizeCap >= gSize)\
-                .join(Location).filter(Location.zip == zip)\
+            spaces = db.session.query(Space).filter(Space.hourlyRate == 0, Space.sizeCap >= gSize) \
+                .join(Location).filter(Location.zip == zip) \
                 .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech))
             return results(spaces)
         else:
-            spaces = db.session.query(Space).filter(Space.hourlyRate >= 1, Space.sizeCap >= gSize)\
-                .join(Location).filter(Location.zip == zip)\
+            spaces = db.session.query(Space).filter(Space.hourlyRate >= 1, Space.sizeCap >= gSize) \
+                .join(Location).filter(Location.zip == zip) \
                 .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech))
         return results(spaces)
     return render_template('search.html', title='Search', form=form)
 
+
 @app.route("/search_results")
 def results(spaces):
     return render_template("searchResults.html", title="Results", spaces=spaces)
+
 
 @app.route('/space/<space>')
 def space(space):
@@ -129,10 +171,11 @@ def space(space):
 
     return render_template('space.html', space=space, location=location, reviews=r, tech=techInSpace)
 
+
 @app.route('/spaces')
 def spaces():
     spaces = Space.query.all()
-    locations=[]
+    locations = []
     for space in spaces:
         l = Location.query.filter_by(id=space.location).first_or_404()
         locations.append(l)
