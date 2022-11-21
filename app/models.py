@@ -32,6 +32,8 @@ class Location(db.Model):
     city = db.Column(db.String(64), index=True)
     state = db.Column(db.String(64), index=True)
     zip = db.Column(db.Integer)
+    lat = db.Column(db.Float)
+    long = db.Column(db.Float)
 
     def __repr__(self):
         return '<Location> {}'.format(self.name)

@@ -1,10 +1,44 @@
-{% extends "base.html" %}
+<head>
+        <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
+        <title> Air Meetings </title>
+</head>
 
-{% block content %}
-    <h1>{{ space.name }}</h1>
+<body>
+    <div>
+        <a href={{ url_for('home') }}>Air Meetings:</a>
+        <a href={{ url_for('spaces') }} >Listings</a>
+        <a href={{ url_for('search') }} >Search</a>
+        {% if current_user.is_anonymous %}
+            <a href={{ url_for('login') }}>Login</a>
+        {% else %}
+            {% if current_user.guest %}
+                <a href={{ url_for('user', username=current_user.username) }}>Account</a>
+                <a href={{ url_for('logout') }}>Logout</a>
+            {% else %}
+                <a href={{ url_for('spaces') }}>Listings</a>
+                <a href={{ url_for('logout') }}>Logout</a>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+<h1>{{ space.name }}</h1>
     <h3> {{ space.description }}</h3>
     <h3 style="display:inline">Located at:</h3>
     <p style="display:inline">{{ location.name }} in {{ location.city }}, {{ location.state }} {{ location.zip }}</p>
+    <div id="map" style="width: 600px; height: 400px;"></div>
+     <div id="popup" class="ol-popup" style="background: #ffffff";>
+     <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+     <div id="popup-content"></div>
+    </div>
+
     <div id="reviews">
     <h3>Reviews:</h3>
         {% if reviews|length != 0 %}
@@ -35,5 +69,72 @@
 
     <form><p>Book: <a href="{{ url_for('book', space=space.name) }}">Click to Book!</a></p></form>
 
+    <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+    <script>
+        let latitude = {{ location.lat }};
+        let longitude = {{ location.long }};
+        //map
+        var attribution = new ol.control.Attribution({
+             collapsible: false
+         });
 
-{% endblock %}
+         var map = new ol.Map({
+             controls: ol.control.defaults({attribution: false}).extend([attribution]),
+             layers: [
+                 new ol.layer.Tile({
+                     source: new ol.source.OSM()
+                 })
+             ],
+             target: 'map',
+             view: new ol.View({
+                 center: ol.proj.fromLonLat([longitude, latitude]),
+                 maxZoom: 18,
+                 zoom: 16
+             })
+         });
+         //marker
+         var layer = new ol.layer.Vector({
+             source: new ol.source.Vector({
+                 features: [
+                     new ol.Feature({
+                         geometry: new ol.geom.Point(ol.proj.fromLonLat([longitude, latitude]))
+                     })
+                 ]
+             })
+         });
+         map.addLayer(layer);
+         //add popup
+         var container = document.getElementById('popup');
+         var content = document.getElementById('popup-content');
+         var closer = document.getElementById('popup-closer');
+
+         var overlay = new ol.Overlay({
+             element: container,
+             autoPan: true,
+             autoPanAnimation: {
+                 duration: 250
+             }
+         });
+         map.addOverlay(overlay);
+
+         closer.onclick = function() {
+             overlay.setPosition(undefined);
+             closer.blur();
+             return false;
+         };
+
+         map.on('singleclick', function (event) {
+             if (map.hasFeatureAtPixel(event.pixel) === true) {
+                 var coordinate = event.coordinate;
+                 content.innerHTML = '<b>{{ space.name }}</b>';
+                 overlay.setPosition(coordinate);
+             } else {
+                 overlay.setPosition(undefined);
+                 closer.blur();
+             }
+         });
+
+
+</script>
+</body>
+

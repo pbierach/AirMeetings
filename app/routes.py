@@ -49,7 +49,8 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('home'))
+        login_user(user)
+        return redirect(url_for('user', username=user.username))
     return render_template('register.html', title='Register', form=form)
 
 
@@ -84,6 +85,7 @@ def user(username):
 
 
 @app.route('/booking/<space>', methods=['GET', 'POST'])
+@login_required
 def book(space):
     space = Space.query.filter_by(name=space).first()
     tech = TechToSpace.query.filter_by(spid=space.id).all()
@@ -94,10 +96,8 @@ def book(space):
             "count": TechToSpace.query.filter_by(tid=t.tid, spid=space.id).all()
         }
         techInSpace.append(curr)
-    upcoming = upcomingMeeting.query.filter_by(spid=space.id)
     form = Booking()
     form.space = space
-    form.upcoming = upcoming
     if form.validate_on_submit():
         flash("You've booked: {}".format(space.name))
         confirm = upcomingMeeting(uid=current_user.id, spid=space.id, date=form.date.data, startTime=time(10, 00), endTime=time(11, 30))
@@ -108,6 +108,7 @@ def book(space):
 
 
 @app.route('/confirm', methods=['GET', 'POST'])
+@login_required
 def confirm():
     form = Booking()
     if form.validate_on_submit():
@@ -129,6 +130,7 @@ def confirm():
 def search():
     form = FullSearch()
     form.price.choices = [(True, 'Free'), (False, '$$$')]
+    form.groupSize.data = 1
     technology = []
     for t in Tech.query.all():
         technology.append((t.id, t.name))
@@ -207,17 +209,23 @@ def populate_db():
     L1 = Location(name="Williams Hall",
                   city="Ithaca",
                   state="NY",
-                  zip=14850
+                  zip=14850,
+                  lat=42.422758,
+                  long=-76.495839
                   )
     L2 = Location(name="Friends Hall",
                   city="Ithaca",
                   state="NY",
-                  zip=14850
+                  zip=14850,
+                  lat=42.422030,
+                  long=-76.497014
                   )
     L3 = Location(name="CNS",
                   city="Ithaca",
                   state="NY",
-                  zip=14850
+                  zip=14850,
+                  lat=42.423299,
+                  long=-76.495559
                   )
     db.session.add_all([L1, L2, L3])
     db.session.commit()
