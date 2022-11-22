@@ -6,7 +6,6 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import User, Location, Space, meetingHistory, upcomingMeeting, reviews, Tech, TechToSpace
 
-
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -58,23 +57,43 @@ class FullSearch(FlaskForm):
     groupSize = IntegerField('Group Size', [NumberRange(min=1, max=100)])
     submit = SubmitField('Search')
 
-    def validate_time(self):
-        if FullSearch.startTime > FullSearch.endTime:
-            raise ValidationError("Meeting can't start after it ends")
+    def validate_startTime(self, field):
+        if field.data > self.endTime.data:
+            raise ValidationError("Meeting can't start after it has ended")
 
-
+    def validate_endTime(self, field):
+        if field.data == self.startTime.data:
+            raise ValidationError("Meeting start and end time are equal")
 
 
 class Booking(FlaskForm):
+    space = StringField()
     date = DateField('Date', format='%Y-%m-%d')
     startTime = TimeField('Start', validators=[DataRequired()])
     endTime = TimeField('End', validators=[DataRequired()])
     groupSize = IntegerField('Group Size', [NumberRange(min=1, max=100)])
     submit = SubmitField('Book')
 
-    def validate_time(self):
-        if FullSearch.startTime > FullSearch.endTime:
-            raise ValidationError("Meeting can't start after it ends")
+    def validate_startTime(self, field):
+        if field.data > self.endTime.data:
+            raise ValidationError("Meeting can't start after it has ended")
+
+    def validate_endTime(self, field):
+        if field.data == self.startTime.data:
+            raise ValidationError("Meeting start and end time are equal")
+
+    def validate_groupSize(self, field):
+        space = Space.query.filter_by(name=self.space.data).first()
+        if space.sizeCap < field.data:
+            raise ValidationError("Your group size is too large for this space")
+
+    def validate_date(self, field):
+        space = Space.query.filter_by(name=self.space.data).first()
+        upcoming = upcomingMeeting.query.filter(upcomingMeeting.spid == space.id,
+                                                upcomingMeeting.date == field.data,
+                                                upcomingMeeting.startTime < self.endTime.data).all()
+        if len(upcoming) != 0:
+            raise ValidationError("Scheduling conflict with date and/or time")
 
 
 

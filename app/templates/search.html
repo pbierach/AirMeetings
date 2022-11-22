@@ -18,10 +18,16 @@
         <p>
             {{ form.startTime.label }}
             {{ form.startTime }}
+            {% for error in form.startTime.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
         </p>
         <p>
             {{ form.endTime.label }}
             {{ form.endTime }}
+            {% for error in form.endTime.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
         </p>
         <p>
             {{ form.price.label }}
@@ -35,6 +41,9 @@
         <p>
             {{ form.groupSize.label }}
             {{ form.groupSize }}
+             {% for error in form.groupSize.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
         </p>
         <p>{{ form.submit() }}</p>
     </form>

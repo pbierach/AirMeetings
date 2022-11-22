@@ -97,7 +97,7 @@ def book(space):
         }
         techInSpace.append(curr)
     form = Booking()
-    form.space = space
+    form.space.data = space.name
     if form.validate_on_submit():
         flash("You've booked: {}".format(space.name))
         confirm = upcomingMeeting(uid=current_user.id, spid=space.id, date=form.date.data, startTime=form.startTime.data, endTime=form.endTime.data)
