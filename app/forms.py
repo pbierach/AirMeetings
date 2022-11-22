@@ -51,19 +51,30 @@ class HomeSearch(FlaskForm):
 class FullSearch(FlaskForm):
     zipcode = StringField('Zipcode', validators=[DataRequired(), Length(5,5,"Please enter a 5 digit zipcode")])
     date = DateField('Date', format='%Y-%m-%d')
-    #time = TimeField('Time', validators=[DataRequired()])
+    startTime = TimeField('Start', validators=[DataRequired()])
+    endTime = TimeField('End', validators=[DataRequired()])
     price = RadioField('Paid or free space?', validators=[DataRequired()])
     tech = SelectMultipleField('Technology', coerce=int, choices=[])
     groupSize = IntegerField('Group Size', [NumberRange(min=1, max=100)])
     submit = SubmitField('Search')
+
+    def validate_time(self):
+        if FullSearch.startTime > FullSearch.endTime:
+            raise ValidationError("Meeting can't start after it ends")
 
 
 
 
 class Booking(FlaskForm):
     date = DateField('Date', format='%Y-%m-%d')
-    #time = TimeField('Time', validators=[DataRequired()])
+    startTime = TimeField('Start', validators=[DataRequired()])
+    endTime = TimeField('End', validators=[DataRequired()])
     groupSize = IntegerField('Group Size', [NumberRange(min=1, max=100)])
     submit = SubmitField('Book')
+
+    def validate_time(self):
+        if FullSearch.startTime > FullSearch.endTime:
+            raise ValidationError("Meeting can't start after it ends")
+
 
 

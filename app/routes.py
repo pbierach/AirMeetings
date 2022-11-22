@@ -1,6 +1,6 @@
 from datetime import date, time
-from flask_sqlalchemy import session
 import sqlalchemy.orm
+import boolean
 from flask import render_template, flash, redirect, url_for
 
 from app import app, db
@@ -100,7 +100,7 @@ def book(space):
     form.space = space
     if form.validate_on_submit():
         flash("You've booked: {}".format(space.name))
-        confirm = upcomingMeeting(uid=current_user.id, spid=space.id, date=form.date.data, startTime=time(10, 00), endTime=time(11, 30))
+        confirm = upcomingMeeting(uid=current_user.id, spid=space.id, date=form.date.data, startTime=form.startTime.data, endTime=form.endTime.data)
         db.session.add(confirm)
         db.session.commit()
         return redirect(url_for('user', username=current_user.username))
@@ -139,22 +139,51 @@ def search():
     if form.validate_on_submit():
         zip = form.zipcode.data
         date = form.date.data
+        #sT = form.startTime.data
+        eT = form.endTime.data
         tech = form.tech.data
         gSize = form.groupSize.data
         free = form.price.data
+
         if free == "True":
-            paying = True
-        else:
-            paying = False
-        if paying:
-            spaces = db.session.query(Space).filter(Space.hourlyRate == 0, Space.sizeCap >= gSize) \
+            if tech is None:
+                s = db.session.query(Space).filter(Space.hourlyRate == 0, Space.sizeCap >= gSize) \
+                    .join(Location).filter(Location.zip == zip) \
+                    .join(upcomingMeeting).filter(eT <= upcomingMeeting.startTime, date == upcomingMeeting.date)
+                s2 = db.session.query(Space).filter(Space.hourlyRate == 0, Space.sizeCap >= gSize) \
+                    .join(Location).filter(Location.zip == zip) \
+                    .join(upcomingMeeting).filter(date != upcomingMeeting.date)
+                spaces = s.union(s2)
+            else:
+                s = db.session.query(Space).filter(Space.hourlyRate == 0, Space.sizeCap >= gSize) \
                 .join(Location).filter(Location.zip == zip) \
-                .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech))
+                .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech))\
+                .join(upcomingMeeting).filter(eT <= upcomingMeeting.startTime, date == upcomingMeeting.date)
+                s2 = db.session.query(Space).filter(Space.hourlyRate == 0, Space.sizeCap >= gSize) \
+                    .join(Location).filter(Location.zip == zip) \
+                    .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech)) \
+                    .join(upcomingMeeting).filter(date != upcomingMeeting.date)
+                spaces = s.union(s2)
             return results(spaces)
         else:
-            spaces = db.session.query(Space).filter(Space.hourlyRate >= 1, Space.sizeCap >= gSize) \
-                .join(Location).filter(Location.zip == zip) \
-                .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech))
+            if tech is None:
+                s = db.session.query(Space).filter(Space.hourlyRate >= 1, Space.sizeCap >= gSize) \
+                    .join(Location).filter(Location.zip == zip) \
+                    .join(upcomingMeeting).filter(eT <= upcomingMeeting.startTime, date == upcomingMeeting.date)
+                s2 = db.session.query(Space).filter(Space.hourlyRate >= 1, Space.sizeCap >= gSize) \
+                    .join(Location).filter(Location.zip == zip) \
+                    .join(upcomingMeeting).filter(date != upcomingMeeting.date)
+                spaces = s.union(s2)
+            else:
+                s = db.session.query(Space).filter(Space.hourlyRate >= 1, Space.sizeCap >= gSize) \
+                    .join(Location).filter(Location.zip == zip) \
+                    .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech))\
+                    .join(upcomingMeeting).filter(eT <= upcomingMeeting.startTime, date == upcomingMeeting.date)
+                s2 = db.session.query(Space).filter(Space.hourlyRate >= 1, Space.sizeCap >= gSize) \
+                    .join(Location).filter(Location.zip == zip) \
+                    .join(TechToSpace).filter(Space.id == TechToSpace.spid, TechToSpace.tid.in_(tech)) \
+                    .join(upcomingMeeting).filter(date != upcomingMeeting.date)
+                spaces = s.union(s2)
         return results(spaces)
     return render_template('search.html', title='Search', form=form)
 
@@ -286,7 +315,7 @@ def populate_db():
 
     mh4date = date(2019, 4, 8)
     mh4STime = time(12, 00)
-    mh4SEime = time(1, 00)
+    mh4SEime = time(13, 00)
 
     MH1 = meetingHistory(uid=1,
                          spid=S3.id,
@@ -324,12 +353,12 @@ def populate_db():
     um2SEime = time(11, 30)
 
     um3date = date(2025, 4, 8)
-    um3STime = time(00, 9, 00)
+    um3STime = time(9, 00)
     um3SEime = time(11, 00)
 
     um4date = date(2024, 9, 9)
     um4STime = time(12, 45)
-    um4SEime = time(1, 45)
+    um4SEime = time(13, 45)
 
     UM1 = upcomingMeeting(uid=1,
                           spid=S3.id,
