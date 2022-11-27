@@ -30,6 +30,9 @@
             <a href="{{ url_for('space', space=space.name) }}">{{ space.name }}</a>
             {{ " on " + history[i]["date"].strftime("%m/%d/%y") + " from " +
             history[i]["start"].strftime('%H:%M') + " until " + history[i]["end"].strftime('%H:%M')}}
+            {%  if history[i]["review"] != 1 %}
+                <a href="{{ url_for('review', space=space.name, date=history[i]['date'], time=history[i]['start'])}}"> (Leave a review!)</a>
+            {% endif %}
             <br>
         {% endfor %}
     {% else %}

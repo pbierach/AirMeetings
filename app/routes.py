@@ -3,9 +3,10 @@ from datetime import date, time, datetime
 from flask import render_template, flash, redirect, url_for
 from app import app, db
 from app.models import User, Location, Space, meetingHistory, upcomingMeeting, reviews, Tech, TechToSpace
-from app.forms import LoginForm, RegistrationForm, FullSearch, Booking
+from app.forms import LoginForm, RegistrationForm, FullSearch, Booking, ReviewForm
 from flask_login import current_user, login_user, logout_user, login_required
 from apscheduler.schedulers.background import BackgroundScheduler
+from sqlalchemy import update
 
 def updateMeetings():
     with app.app_context():
@@ -82,6 +83,7 @@ def register():
 
 
 @app.route('/user/<username>')
+@login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     upcoming = upcomingMeeting.query.filter_by(uid=user.id)
@@ -104,7 +106,8 @@ def user(username):
             "location": Location.query.filter_by(id=Space.location).first(),
             "date": meet.date,
             "start": meet.startTime,
-            "end": meet.endTime
+            "end": meet.endTime,
+            "review": meet.review
         }
         pMeetings.append(curr)
 
@@ -132,25 +135,6 @@ def book(space):
         db.session.commit()
         return redirect(url_for('user', username=current_user.username))
     return render_template('booking.html', title='Search', form=form, space=space, tech=techInSpace)
-
-
-@app.route('/confirm', methods=['GET', 'POST'])
-@login_required
-def confirm():
-    form = Booking()
-    if form.validate_on_submit():
-
-        confirmed = Booking(date=form.date.data,
-                            space=form.space.data,
-                            tech=form.tech.data,
-                            groupSize=form.groupSize.data)
-        db.session.add(confirmed)
-        db.session.commit()
-        return redirect(url_for('confirm', date=form.date.data,
-                                space=form.space.data,
-                                tech=form.tech.data,
-                                groupSize=form.groupSize.data))
-    return render_template('booking.html', form=form)
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -245,6 +229,22 @@ def spaces():
         l = Location.query.filter_by(id=space.location).first_or_404()
         locations.append(l)
     return render_template('listings.html', spaces=spaces)
+
+@app.route('/review/<space>/<date>/<time>', methods=['GET', 'POST'])
+def review(space, date, time):
+    form = ReviewForm()
+    day = datetime.strptime(date, '%Y-%m-%d').date()
+    st = datetime.strptime(time, '%H:%M:%S').time()
+    meetSpace = Space.query.filter_by(name=space).first()
+    meet = meetingHistory.query.filter_by(uid=current_user.id, spid=meetSpace.id, date=day, startTime=st, review=0).first()
+    if form.validate_on_submit():
+        flash("Thanks for your review!")
+        r = reviews(uid=current_user.id, spid=meetSpace.id, score=form.score.data, desc=form.desc.data)
+        meetingHistory.__setattr__(meet, 'review', 1)
+        db.session.add(r)
+        db.session.commit()
+        return redirect(url_for('user', username=current_user.username))
+    return render_template('review.html', title="Review", form=form, space=space, date=date, time=time)
 
 
 def reset_db():

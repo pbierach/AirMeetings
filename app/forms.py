@@ -1,7 +1,9 @@
+import datetime
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, DateField, SelectMultipleField, SelectField, \
      RadioField, TimeField, IntegerField
-from wtforms.validators import DataRequired, NumberRange
+from wtforms.validators import DataRequired, NumberRange, length
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import User, Location, Space, meetingHistory, upcomingMeeting, reviews, Tech, TechToSpace
@@ -88,12 +90,20 @@ class Booking(FlaskForm):
             raise ValidationError("Your group size is too large for this space")
 
     def validate_date(self, field):
-        space = Space.query.filter_by(name=self.space.data).first()
-        upcoming = upcomingMeeting.query.filter(upcomingMeeting.spid == space.id,
-                                                upcomingMeeting.date == field.data,
-                                                upcomingMeeting.startTime < self.endTime.data).all()
-        if len(upcoming) != 0:
-            raise ValidationError("Scheduling conflict with date and/or time")
+        if self.space.date < datetime.today().date():
+            raise ValidationError("Pick a current or future time!")
+        else:
+            space = Space.query.filter_by(name=self.space.data).first()
+            upcoming = upcomingMeeting.query.filter(upcomingMeeting.spid == space.id,
+                                                    upcomingMeeting.date == field.data,
+                                                    upcomingMeeting.startTime < self.endTime.data).all()
+            if len(upcoming) != 0:
+                raise ValidationError("Scheduling conflict with date and/or time")
+
+class ReviewForm(FlaskForm):
+    score = IntegerField("Score:", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    desc = StringField("What were your thoughts on the space?", validators=[length(max=200)] )
+    submit = SubmitField("Leave Review")
 
 
 
