@@ -62,6 +62,7 @@ class meetingHistory(db.Model):
     date = db.Column(db.Date())
     startTime = db.Column(db.Time())
     endTime = db.Column(db.Time())
+    review = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<meeting> {}'.format(self.spid + " on "

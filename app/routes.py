@@ -1,17 +1,44 @@
-from datetime import date, time
-import sqlalchemy.orm
-import boolean
+import datetime
+from datetime import date, time, datetime
 from flask import render_template, flash, redirect, url_for
-
 from app import app, db
 from app.models import User, Location, Space, meetingHistory, upcomingMeeting, reviews, Tech, TechToSpace
-from app.forms import LoginForm, RegistrationForm, HomeSearch, FullSearch, Booking
+from app.forms import LoginForm, RegistrationForm, FullSearch, Booking
 from flask_login import current_user, login_user, logout_user, login_required
+from apscheduler.schedulers.background import BackgroundScheduler
+
+def updateMeetings():
+    with app.app_context():
+        print('updating db')
+        upcoming = upcomingMeeting.query.all()
+        updated = []
+        changes = False
+        for meeting in upcoming:
+            if meeting.date <= datetime.today().date():
+                if meeting.startTime < datetime.now().time():
+                    changes = True
+                    prev = meetingHistory(uid=meeting.uid,
+                                          spid=meeting.spid,
+                                          date=meeting.date,
+                                          startTime=meeting.startTime,
+                                          endTime=meeting.endTime,
+                                          review=False)
+                    db.session.delete(meeting)
+                    updated.append(prev)
+        if changes:
+            db.session.add_all(updated)
+            db.session.commit()
+            print("db changed")
+        else:
+            print("no changes")
 
 
 @app.route('/')
 @app.route('/home')
 def home():
+    sched = BackgroundScheduler(daemon=True)
+    sched.add_job(updateMeetings, 'interval', minutes=1)
+    sched.start()
     return render_template('home.html', title="Home")
 
 
@@ -276,9 +303,7 @@ def populate_db():
                sizeCap=20,
                hourlyRate=8,
                location=L2.id,
-               description="To be or not to be, that is the question."
-                           "whether tis nobler in the mind to suffer the slings"
-                           "and arrows of outrageous fortune or take arms and by opposing end them"
+               description="We're all friends here!"
                )
     S4 = Space(name="CNS 112",
                sizeCap=100,
@@ -321,25 +346,29 @@ def populate_db():
                          spid=S3.id,
                          date=mh1date,
                          startTime=mh1STime,
-                         endTime=mh1SEime)
+                         endTime=mh1SEime,
+                         review=False)
 
     MH2 = meetingHistory(uid=1,
                          spid=S4.id,
                          date=mh2date,
                          startTime=mh2STime,
-                         endTime=mh2SEime)
+                         endTime=mh2SEime,
+                         review=False)
 
     MH3 = meetingHistory(uid=2,
                          spid=S3.id,
                          date=mh3date,
                          startTime=mh3STime,
-                         endTime=mh3SEime)
+                         endTime=mh3SEime,
+                         review=False)
 
     MH4 = meetingHistory(uid=3,
                          spid=S3.id,
                          date=mh4date,
                          startTime=mh4STime,
-                         endTime=mh4SEime)
+                         endTime=mh4SEime,
+                         review=False)
 
     db.session.add_all([MH1, MH2, MH3, MH4])
     db.session.commit()
