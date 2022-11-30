@@ -3,56 +3,64 @@
 {% block styles %}
 {{super()}}
 <link rel="stylesheet"
-      href="{{url_for('.static', filename='css/styles.css')}}">
+      href="{{url_for('.static', filename='css/styles1.css')}}">
 {% endblock %}
 
 {% block navbar %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="{{ url_for('home') }}">Air Meetings</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{ url_for('spaces') }}">Listings</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('search') }}">Search</a></li>
-                        {% if current_user.is_anonymous %}
-                            <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
-                        {% else %}
-                            {% if current_user.guest %}
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">Account</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+<!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{{ url_for('home') }}">Airmeetings </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('spaces') }}">Listings</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('search') }}">Search</a></li>
+                            {% if current_user.is_anonymous %}
+                                <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
                             {% else %}
-                                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{ url_for('spaces') }}">Listings</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('search') }}">Search</a></li>
+                                {% if current_user.guest %}
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">Account</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+                                {% else %}
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('spaces') }}">Listings</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('search') }}">Search</a></li>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
-                    </ul>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
+
 {% endblock %}
 
 {% block content %}
-    <header class="bg-dark py-5">
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">“Find the perfect meeting space.”</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">Created by PB & J coding</p>
+<!-- Header-->
+            <header class="bg-dark py-5">
+                <div class="container px-5">
+                    <div class="row gx-5 align-items-center justify-content-center">
+                        <div class="col-lg-8 col-xl-7 col-xxl-6">
+                            <div class="my-5 text-center text-xl-start">
+                                <h1 class="display-5 fw-bolder text-white mb-2">Welcome to Airmeetings</h1>
+                                <p class="lead fw-normal text-white-50 mb-4">“Find the perfect meeting space.”</p>
+                                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                                    <a class="btn btn-outline-light btn-lg px-4" href="{{ url_for('spaces') }}">Get Started</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5" src="https://www.peerspace.com/resources/wp-content/uploads/Eco-Friendly-Executive-Boardroom-santa-monica-la-los-angeles-rental-1200x600.jpg" alt="..." /></div>
+                    </div>
+                </div>
+            </header>
+
+<!-- Footer-->
+        <footer class="bg-dark py-4 mt-auto">
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; AirMeetings 2022</div></div>
+                    <div class="col-auto"><div class="small m-0 text-white">Created by PB & J Coding</div></div>
                 </div>
             </div>
-        </header>
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-<div class="text-center text-black">
-                    <h1 class="display-4 fw-bolder">Welcome to Airmeetings</h1>
-</div>
-
+        </footer>
 {% endblock %}

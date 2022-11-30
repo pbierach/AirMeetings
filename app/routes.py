@@ -54,7 +54,7 @@ def login():
             return redirect(url_for('login'))
         login_user(user)
         return redirect(url_for('home'))
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login_old.html', title='Sign In', form=form)
 
 
 @app.route('/logout')
