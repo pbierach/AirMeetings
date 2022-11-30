@@ -244,7 +244,7 @@ def spaces():
     for space in spaces:
         l = Location.query.filter_by(id=space.location).first_or_404()
         locations.append(l)
-    return render_template('listings.html', spaces=spaces)
+    return render_template('listings_old.html', spaces=spaces)
 
 
 def reset_db():
