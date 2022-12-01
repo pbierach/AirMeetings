@@ -54,7 +54,7 @@ def login():
             return redirect(url_for('login'))
         login_user(user)
         return redirect(url_for('home'))
-    return render_template('login_old.html', title='Sign In', form=form)
+    return render_template('login.html', title='Log In', form=form)
 
 
 @app.route('/logout')
@@ -212,7 +212,7 @@ def search():
                     .join(upcomingMeeting).filter(date != upcomingMeeting.date)
                 spaces = s.union(s2)
         return results(spaces)
-    return render_template('search.html', title='Search', form=form)
+    return render_template('search_old.html', title='Search', form=form)
 
 
 @app.route("/search_results")
@@ -244,7 +244,7 @@ def spaces():
     for space in spaces:
         l = Location.query.filter_by(id=space.location).first_or_404()
         locations.append(l)
-    return render_template('listings_old.html', spaces=spaces)
+    return render_template('listings.html', spaces=spaces)
 
 @app.route('/review/<space>/<date>/<time>', methods=['GET', 'POST'])
 def review(space, date, time):
