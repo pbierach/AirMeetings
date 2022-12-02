@@ -1,24 +1,10 @@
 {% extends "base.html" %}
 
-{% block styles %}
-{{super()}}
-<link rel="stylesheet"
-      href="{{url_for('.static', filename='css/styles2.css')}}">
-{% endblock %}
 
 {% block content %}
-<body>
-        <div class="d-flex" id="wrapper">
-            <!-- Sidebar-->
-            <div class="border-end bg-white" id="sidebar-wrapper">
-                <div class="sidebar-heading border-bottom bg-light"><h1>Hello, {{ user.name }}!</h1></div>
-                <div class="list-group list-group-flush">
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Upcoming Meetings</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Previous Meetings</a>
+    <h1>Hello, {{ user.name }}!</h1>
 
-                </div>
-            </div>
-            <div id="upcoming_meetings">
+    <div id="upcoming_meetings">
     <h3>Upcoming Meetings:</h3>
     {% if meetings|length != 0 %}
         {% for i in range(meetings|length) %}
@@ -54,10 +40,5 @@
         <p>No previous meetings</p>
     {% endif %}
     </div>
-</div>
-
-
-
-
 
 {% endblock %}

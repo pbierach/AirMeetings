@@ -53,7 +53,7 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user)
-        return redirect(url_for('user',username=user.username))
+        return redirect(url_for('home'))
     return render_template('login.html', title='Log In', form=form)
 
 
@@ -109,6 +109,7 @@ def user(username):
         pMeetings.append(curr)
 
     return render_template('user.html', user=user, meetings=uMeetings, history=pMeetings)
+
 
 
 @app.route('/booking/<space>', methods=['GET', 'POST'])
@@ -212,7 +213,7 @@ def search():
                     .join(upcomingMeeting).filter(date != upcomingMeeting.date)
                 spaces = s.union(s2)
         return results(spaces)
-    return render_template('search_old.html', title='Search', form=form)
+    return render_template('search.html', title='Search', form=form)
 
 
 @app.route("/search_results")
@@ -234,7 +235,7 @@ def space(space):
         }
         techInSpace.append(curr)
 
-    return render_template('space.html', space=space, location=location, reviews=r, tech=techInSpace)
+    return render_template('space_old.html', space=space, location=location, reviews=r, tech=techInSpace)
 
 
 @app.route('/spaces')

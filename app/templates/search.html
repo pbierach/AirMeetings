@@ -49,18 +49,18 @@
                 <div class="text-center">
                   <img src="https://media.istockphoto.com/id/1071617884/vector/chief-executive-line-icon.jpg?s=612x612&w=0&k=20&c=C24mva6vPB1eNPBaZexGjR5Q9TWnmtq2mpTQHc_-xSU="
                     style="width: 185px;" alt="logo">
-                  <h4 class="mt-1 mb-5 pb-1">Join the community </h4>
+                  <h4 class="mt-1 mb-5 pb-1">Search</h4>
                 </div>
 
                 <form action="" method="POST">
                 {{ form.csrf_token }}
-                  <p class = "text-center">Please register for your account</p>
+                  <p class = "text-center">Where are you looking to meet?</p>
 
                   <div class="form-outline text-center mb-4">
                       <p>
-                        {{ form.fullName.label }}<br>
-                        {{ form.fullName(size=32) }}<br>
-                        {% for error in form.fullName.errors %}
+                        {{ form.zipcode.label }}<br>
+                        {{ form.zipcode(size=32) }}<br>
+                        {% for error in form.zipcode.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                       </p>
@@ -68,16 +68,16 @@
 
                   <div class="form-outline text-center mb-4">
                       <p>
-                        {{ form.guest.label }}
-                        {{ form.guest }}
+                        {{ form.date.label }}<br>
+                        {{ form.date(size=32) }}<br>
                       </p>
                   </div>
 
                   <div class="form-outline text-center mb-4">
                       <p>
-                        {{ form.username.label }}<br>
-                        {{ form.username(size=32) }}<br>
-                        {% for error in form.username.errors %}
+                        {{ form.startTime.label }}
+                        {{ form.startTime }}
+                        {% for error in form.startTime.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                       </p>
@@ -85,9 +85,9 @@
 
                   <div class="form-outline text-center mb-4">
                       <p>
-                        {{ form.email.label }}<br>
-                        {{ form.email(size=64) }}<br>
-                        {% for error in form.email.errors %}
+                        {{ form.endTime.label }}
+                        {{ form.endTime }}
+                        {% for error in form.endTime.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                       </p>
@@ -95,22 +95,26 @@
 
                   <div class="form-outline text-center mb-4">
                       <p>
-                        {{ form.password.label }}<br>
-                        {{ form.password(size=32) }}<br>
-                        {% for error in form.password.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
+                        {{ form.price.label }}
+                        {{ form.price }}
                       </p>
                   </div>
 
                   <div class="form-outline text-center mb-4">
                       <p>
-                        {{ form.password2.label }}<br>
-                        {{ form.password2(size=32) }}<br>
-                        {% for error in form.password2.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
+                        {{ form.tech.label }}
+                        {{ form.tech }}
                       </p>
+                  </div>
+
+                  <div class="form-outline text-center mb-4">
+                    <p>
+                      {{ form.groupSize.label }}
+                      {{ form.groupSize }}
+                      {% for error in form.groupSize.errors %}
+                      <span style="color: red;">[{{ error }}]</span>
+                      {% endfor %}
+                    </p>
                   </div>
 
                   <div class="form outline text-center pt-1 mb-5 pb-1">
@@ -119,9 +123,7 @@
 
                 </form>
 
-                <div class="d-flex align-items-center justify-content-center pb-4">
-                    <p>Already have an account? <a href="{{ url_for('login') }}">Click to Login!</a></p>
-                </div>
+
               </div>
             </div>
             <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
