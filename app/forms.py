@@ -1,5 +1,5 @@
 import datetime
-
+from datetime import date
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, DateField, SelectMultipleField, SelectField, \
      RadioField, TimeField, IntegerField
@@ -90,7 +90,7 @@ class Booking(FlaskForm):
             raise ValidationError("Your group size is too large for this space")
 
     def validate_date(self, field):
-        if self.space.date < datetime.today().date():
+        if self.date.data < date.today():
             raise ValidationError("Pick a current or future time!")
         else:
             space = Space.query.filter_by(name=self.space.data).first()
