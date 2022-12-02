@@ -104,7 +104,8 @@ def user(username):
             "location": Location.query.filter_by(id=Space.location).first(),
             "date": meet.date,
             "start": meet.startTime,
-            "end": meet.endTime
+            "end": meet.endTime,
+            "review": meet.review
         }
         pMeetings.append(curr)
 
