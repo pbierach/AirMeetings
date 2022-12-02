@@ -52,7 +52,8 @@
                   <h4 class="mt-1 mb-5 pb-1">We are Airmeetings</h4>
                 </div>
 
-                <form>
+                <form action="" method="POST">
+                {{ form.csrf_token }}
                   <p class = "text-center">Please login to your account</p>
 
                   <div class="form-outline text-center mb-4">
