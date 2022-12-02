@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="py-5">
+    <header class="bg-white py-5">
                 <div class="container px-5 my-5">
                     <div class="row gx-5 justify-content-center">
                         <div class="col-lg-8 col-xl-6">
@@ -17,14 +17,20 @@
                             </div>
                         </div>
                     </div>
+    </header>
 
 
                     <h1> Spaces </h1>
 
-                    {% for space in spaces %}
-                    <div class="row gx-5">
+
+    <section class="py-5">
+
+
+                        {% for space in spaces %}
                         <div class="col-lg-4 mb-5">
                             <div class="card h-100 shadow border-0">
+
+
                                 <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="..." />
                                 <div class="card-body p-4">
                                     <div class="badge bg-primary bg-gradient rounded-pill mb-2">space</div>
