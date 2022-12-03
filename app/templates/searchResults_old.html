@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Results:</h1>
+
+    <div id="results">
+    {% for space in spaces %}
+        {% include "_spacePreview.html" %}
+    {% endfor %}
+    </div>
+
+{% endblock %}
