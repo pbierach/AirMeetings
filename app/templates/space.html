@@ -1,4 +1,12 @@
 {% extends "base.html" %}
+
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='css/styles3.css')}}">
+{% endblock %}
+
 {% block navbar %}
 <!-- Navigation-->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -29,65 +37,89 @@
 
 {% endblock %}
 
-<head>
-    <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
-    <link rel="stylesheet" href="/static/css/openstreetmap.css" type="text/css">
-    <title> Air Meetings </title>
-</head>
+{% block content %}
 
-<body>
+<!-- Page content-->
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- content-->
+                    <article>
+                        <!-- header-->
+                        <header class="mb-4">
+                            <!-- title-->
+                            <h1 class="fw-bolder mb-1">{{ space.name }}</h1>
 
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
-    </div>
-<h1>{{ space.name }}</h1>
-    <h3> {{ space.description }}</h3>
-    <h3>Available to rent for ${{ space.hourlyRate }} per hour</h3>
-    <h3 style="display:inline">Located at:</h3>
-    <p style="display:inline">{{ location.name }} in {{ location.city }}, {{ location.state }} {{ location.zip }}</p>
-    <div id="map" style="width: 600px; height: 400px;"></div>
-     <div id="popup" class="ol-popup" style="background: #ffffff";>
-     <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-     <div id="popup-content"></div>
-    </div>
+                        </header>
 
-    <div id="reviews">
-    <h3>Reviews:</h3>
-        {% if reviews|length != 0 %}
-            {% set total = namespace(value=0) %}
-            {% set count = namespace(value=0) %}
-        {% for i in range(reviews|length) %}
-            {% set total.value = total.value + reviews[i].score %}
-            {% set count.value = i %}
-            <p>{{ reviews[i].score }} : {{ reviews[i].desc }} </p>
-        {% endfor %}
-            {% set count.value = count.value + 1 %}
-            <p>Average Review Score: {{ total.value / count.value }}</p>
-    {% else %}
-        <p>No one has reviewed this space yet!</p>
-    {% endif %}
-    </div>
-    <div id="tech">
-    <h3>Available Technology:</h3>
-    {% if tech|length != 0 %}
-        {% for i in range(tech|length) %}
-            <p>{{ tech[i]["tech"][0].name }} : {{ tech[i]["count"][0].count }} </p>
-        {% endfor %}
-    {% else %}
-        <p>This room has no relevant technology.</p>
-    {% endif %}
+                        <!-- Map figure-->
+                        <div id="map" style="width: 600px; height: 400px;"></div>
+                        <div id="popup" class="ol-popup" style="background: #ffffff";>
+                            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                            <div id="popup-content"></div>
+                        </div>
 
-    </div>
+                        <!-- Post content-->
+                        <section class="mb-5">
+                            <h3> {{ space.description }}</h3>
+                            <h3>Available to rent for ${{ space.hourlyRate }} per hour</h3>
+                            <h3 style="display:inline">Located at:</h3>
+                            <h5 style="display:inline">{{ location.name }} in {{ location.city }}, {{ location.state }} {{ location.zip }}</h5>
+                        </section>
+                    </article>
+                    <!-- Comments section-->
+                    <section class="mb-5">
 
-    <form><p>Book: <a href="{{ url_for('book', space=space.name) }}">Click to Book!</a></p></form>
+                    </section>
+                </div>
+                <!-- Side widgets-->
+                <div class="col-lg-4">
+                    <!-- Side widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Book Now</div>
+                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                            <a class="btn btn-outline-dark btn-lg px-4" href="href={{ url_for('book', space=space.name) }}">Click to Book!</a>
+                        </div>
+                    </div>
 
-    <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+                    <!-- Side widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Reviews</div>
+                        <div id="reviews">
+                            {% if reviews|length != 0 %}
+                                {% set total = namespace(value=0) %}
+                                {% set count = namespace(value=0) %}
+                            {% for i in range(reviews|length) %}
+                                {% set total.value = total.value + reviews[i].score %}
+                                {% set count.value = i %}
+                                <p>{{ reviews[i].score }} : {{ reviews[i].desc }} </p>
+                            {% endfor %}
+                                {% set count.value = count.value + 1 %}
+                                <p>Average Review Score: {{ total.value / count.value }}</p>
+                            {% else %}
+                                <p>No one has reviewed this space yet!</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Side widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Available Technology</div>
+                        <div id="tech">
+                            {% if tech|length != 0 %}
+                            {% for i in range(tech|length) %}
+                            <p>{{ tech[i]["tech"][0].name }} : {{ tech[i]["count"][0].count }} </p>
+                            {% endfor %}
+                            {% else %}
+                            <p>This room has no relevant technology.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
     <script>
         let latitude = {{ location.lat }};
         let longitude = {{ location.long }};
@@ -154,5 +186,4 @@
 
 
 </script>
-</body>
-
+{% endblock %}

@@ -1,56 +1,126 @@
-{% extends "base.html" %}
+{% extends "bootstrap/base.html" %}
 
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='css/styles1.css')}}">
+{% endblock %}
+
+{% block navbar %}
+<!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{{ url_for('home') }}">Airmeetings </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('spaces') }}">Listings</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('search') }}">Search</a></li>
+                            {% if current_user.is_anonymous %}
+                                <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+                            {% else %}
+                                {% if current_user.guest %}
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">Account</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+                                {% else %}
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('spaces') }}">Listings</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('search') }}">Search</a></li>
+                                {% endif %}
+                            {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+{% endblock %}
 
 {% block content %}
-    <h1>Booking for {{ space.name }}</h1>
-    <h2>Space Details:</h2>
-    <p>Max Group Size: {{ space.sizeCap }}</p>
-    {% if tech|length != 0 %}
-        {% for i in range(tech|length) %}
-            <p>{{ tech[i]["tech"][0].name }} : {{ tech[i]["count"][0].count }} </p>
-        {% endfor %}
-    {% else %}
-        <p>This room has no relevant technology.</p>
-    {% endif %}
-    <br>
-    <br>
+<section class="h-100 gradient-form" style="background-color: #eee;">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-xl-10">
+        <div class="card rounded-3 text-black">
+          <div class="row g-0">
+            <div class="col-lg-6">
+              <div class="card-body p-md-5 mx-md-4">
 
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p>What date?</p>
-        <p>
-            {{ form.date.label }}<br>
-            {{ form.date(size=32) }}<br>
-            {% for error in form.date.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>What time?</p>
-        <p>
-            {{ form.startTime.label }}
-            {{ form.startTime }}
-            {% for error in form.startTime.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.endTime.label }}
-            {{ form.endTime }}
-            {% for error in form.endTime.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
+                <div class="text-center">
+                  <img src="https://media.istockphoto.com/id/1071617884/vector/chief-executive-line-icon.jpg?s=612x612&w=0&k=20&c=C24mva6vPB1eNPBaZexGjR5Q9TWnmtq2mpTQHc_-xSU="
+                    style="width: 185px;" alt="logo">
+                  <h4 class="mt-1 mb-5 pb-1">Book Now</h4>
+                </div>
+                  <form action="" method="post" novalidate>
+                      {{ form.hidden_tag() }}
+                      <div class="form-outline text-center mb-4">
+                          <p>
+                              {{ form.date.label }}<br>
+                              {{ form.date(size=32) }}<br>
+                              {% for error in form.date.errors %}
+                              <span style="color: red;">[{{ error }}]</span>
+                              {% endfor %}
+                          </p>
+                      </div>
 
-        <p>How many people?</p>
-        <p>
-            {{ form.groupSize.label }}
-            {{ form.groupSize }}
-             {% for error in form.groupSize.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+                      <div class="form-outline text-center mb-4">
+                          <h5>What time?</h5>
+                          <p>
+                              {{ form.startTime.label }}
+                              {{ form.startTime }}
+                              {% for error in form.startTime.errors %}
+                              <span style="color: red;">[{{ error }}]</span>
+                              {% endfor %}
+                          </p>
+                      </div>
 
+                      <div class="form-outline text-center mb-4">
+                          <p>
+                              {{ form.endTime.label }}
+                              {{ form.endTime }}
+                              {% for error in form.endTime.errors %}
+                              <span style="color: red;">[{{ error }}]</span>
+                              {% endfor %}
+                          </p>
+                      </div>
+
+                      <div class="form-outline text-center mb-4">
+                          <h5>How many people?</h5>
+                          <p>
+                              {{ form.groupSize.label }}
+                              {{ form.groupSize }}
+                              {% for error in form.groupSize.errors %}
+                              <span style="color: red;">[{{ error }}]</span>
+                              {% endfor %}
+                          </p>
+                      </div>
+
+                      <div class="form-outline text-center mb-4">
+                          <p>{{ form.submit() }}</p>
+                      </div>
+                  </form>
+              </div>
+            </div>
+              <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                  <div class="text-black px-3 py-4 p-md-5 mx-md-4">
+                      <h1 class="mb-4">Booking for {{ space.name }}</h1>
+                      <h2>Space Details:</h2>
+                      <p>Max Group Size: {{ space.sizeCap }}</p>
+                      {% if tech|length != 0 %}
+                      {% for i in range(tech|length) %}
+                      <p>{{ tech[i]["tech"][0].name }} : {{ tech[i]["count"][0].count }} </p>
+                      {% endfor %}
+                      {% else %}
+                      <p>This room has no relevant technology.</p>{% endif %}
+
+                      <br>
+                      <br>
+                  </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% endblock %}

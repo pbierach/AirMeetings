@@ -236,7 +236,7 @@ def space(space):
         }
         techInSpace.append(curr)
 
-    return render_template('space_old.html', space=space, location=location, reviews=r, tech=techInSpace)
+    return render_template('space.html', space=space, location=location, reviews=r, tech=techInSpace)
 
 
 @app.route('/spaces')

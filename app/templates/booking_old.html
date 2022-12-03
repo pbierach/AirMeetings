@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <h1>Booking for {{ space.name }}</h1>
+    <h2>Space Details:</h2>
+    <p>Max Group Size: {{ space.sizeCap }}</p>
+    {% if tech|length != 0 %}
+        {% for i in range(tech|length) %}
+            <p>{{ tech[i]["tech"][0].name }} : {{ tech[i]["count"][0].count }} </p>
+        {% endfor %}
+    {% else %}
+        <p>This room has no relevant technology.</p>
+    {% endif %}
+    <br>
+    <br>
+
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>What date?</p>
+        <p>
+            {{ form.date.label }}<br>
+            {{ form.date(size=32) }}<br>
+            {% for error in form.date.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>What time?</p>
+        <p>
+            {{ form.startTime.label }}
+            {{ form.startTime }}
+            {% for error in form.startTime.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.endTime.label }}
+            {{ form.endTime }}
+            {% for error in form.endTime.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <p>How many people?</p>
+        <p>
+            {{ form.groupSize.label }}
+            {{ form.groupSize }}
+             {% for error in form.groupSize.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+
+{% endblock %}
