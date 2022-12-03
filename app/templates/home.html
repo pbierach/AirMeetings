@@ -20,7 +20,7 @@
                                 <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
                             {% else %}
                                 {% if current_user.guest %}
-                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">Account</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('upcoming', username=current_user.username) }}">Account</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
                                 {% else %}
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('spaces') }}">Listings</a></li>

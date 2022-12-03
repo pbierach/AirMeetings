@@ -21,7 +21,7 @@
                                 <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
                             {% else %}
                                 {% if current_user.guest %}
-                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">Account</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('upcoming', username=current_user.username) }}">Account</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
                                 {% else %}
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('spaces') }}">Listings</a></li>
@@ -72,13 +72,15 @@
 
                     </section>
                 </div>
+
                 <!-- Side widgets-->
                 <div class="col-lg-4">
                     <!-- Side widget-->
                     <div class="card mb-4">
                         <div class="card-header">Book Now</div>
                         <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
-                            <a class="btn btn-outline-dark btn-lg px-4" href="href={{ url_for('book', space=space.name) }}">Click to Book!</a>
+                                <form><p>Book: <a class="btn btn-outline-dark btn-lg px-4" href="{{ url_for('book', space=space.name) }}">Click to Book!</a></p></form>
+
                         </div>
                     </div>
 

@@ -13,8 +13,8 @@
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light"><h1>Hello, {{ user.name }}!</h1></div>
                 <div class="list-group list-group-flush">
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Upcoming Meetings</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Previous Meetings</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('upcoming', username=current_user.username) }}">Upcoming Meetings</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('previous', username=current_user.username) }}">Previous Meetings</a>
 
                 </div>
             </div>
@@ -35,25 +35,7 @@
     {% endif %}
     </div>
 
-    <div id="past_meetings">
-    <h3>Previous Meetings:</h3>
-    {% if history|length != 0 %}
-        {% for i in range(history|length) %}
-            {% set space = history[i]["space"] %}
-            {% set location = history[i]["location"] %}
-            {{"Meeting at " + location.name + " in " }}
-            <a href="{{ url_for('space', space=space.name) }}">{{ space.name }}</a>
-            {{ " on " + history[i]["date"].strftime("%m/%d/%y") + " from " +
-            history[i]["start"].strftime('%H:%M') + " until " + history[i]["end"].strftime('%H:%M')}}
-            {%  if history[i]["review"] != 1 %}
-                <a href="{{ url_for('review', space=space.name, date=history[i]['date'], time=history[i]['start'])}}"> (Leave a review!)</a>
-            {% endif %}
-            <br>
-        {% endfor %}
-    {% else %}
-        <p>No previous meetings</p>
-    {% endif %}
-    </div>
+
 </div>
 
 

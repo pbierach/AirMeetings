@@ -13,8 +13,8 @@
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light"><h1>Hello, {{ user.name }}!</h1></div>
                 <div class="list-group list-group-flush">
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('upcoming') }}">Upcoming Meetings</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('previous') }}">Previous Meetings</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('upcoming', username=current_user.username) }}">Upcoming Meetings</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('previous', username=current_user.username) }}">Previous Meetings</a>
 
                 </div>
             </div>

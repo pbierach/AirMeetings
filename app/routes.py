@@ -77,12 +77,12 @@ def register():
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         login_user(user)
-        return redirect(url_for('user', username=user.username))
+        return redirect(url_for('upcoming', username=user.username))
     return render_template('register.html', title='Register', form=form)
 
 
-@app.route('/user/<username>')
-def user(username):
+@app.route('/user/<username>/previous')
+def previous(username):
     user = User.query.filter_by(username=username).first_or_404()
     upcoming = upcomingMeeting.query.filter_by(uid=user.id)
     history = meetingHistory.query.filter_by(uid=user.id)
@@ -109,7 +109,37 @@ def user(username):
         }
         pMeetings.append(curr)
 
-    return render_template('user.html', user=user, meetings=uMeetings, history=pMeetings)
+    return render_template('previous.html', user=user, meetings=uMeetings, history=pMeetings)
+
+@app.route('/user/<username>/upcoming')
+def upcoming(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    upcoming = upcomingMeeting.query.filter_by(uid=user.id)
+    history = meetingHistory.query.filter_by(uid=user.id)
+    uMeetings = []
+    pMeetings = []
+    for meet in upcoming:
+        curr = {
+            "space": Space.query.filter_by(id=meet.spid).first(),
+            "location": Location.query.filter_by(id=Space.location).first(),
+            "date": meet.date,
+            "start": meet.startTime,
+            "end": meet.endTime
+        }
+        uMeetings.append(curr)
+
+    for meet in history:
+        curr = {
+            "space": Space.query.filter_by(id=meet.spid).first(),
+            "location": Location.query.filter_by(id=Space.location).first(),
+            "date": meet.date,
+            "start": meet.startTime,
+            "end": meet.endTime,
+            "review": meet.review
+        }
+        pMeetings.append(curr)
+
+    return render_template('upcoming.html', user=user, meetings=uMeetings, history=pMeetings)
 
 
 
@@ -132,7 +162,7 @@ def book(space):
         confirm = upcomingMeeting(uid=current_user.id, spid=space.id, date=form.date.data, startTime=form.startTime.data, endTime=form.endTime.data)
         db.session.add(confirm)
         db.session.commit()
-        return redirect(url_for('user', username=current_user.username))
+        return redirect(url_for('upcoming', username=current_user.username))
     return render_template('booking.html', title='Search', form=form, space=space, tech=techInSpace)
 
 
@@ -261,7 +291,7 @@ def review(space, date, time):
         meetingHistory.__setattr__(meet, 'review', 1)
         db.session.add(r)
         db.session.commit()
-        return redirect(url_for('user', username=current_user.username))
+        return redirect(url_for('upcoming', username=current_user.username))
     return render_template('review.html', title="Review", form=form, space=space, date=date, time=time)
 
 
