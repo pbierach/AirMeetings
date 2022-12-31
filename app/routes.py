@@ -32,7 +32,6 @@ def updateMeetings():
         else:
             print("no changes")
 
-
 @app.route('/')
 @app.route('/home')
 def home():
@@ -338,7 +337,7 @@ def populate_db():
                sizeCap=25,
                hourlyRate=10,
                location=L1.id,
-               description="Wonderful home of CS205! Here you can find"
+               description="Wonderful home of CS205! Here you can find "
                            "Doug Turnbull and many great devices."
                )
     S2 = Space(name="Williams 310",
@@ -363,7 +362,7 @@ def populate_db():
                sizeCap=15,
                hourlyRate=0,
                location=L3.id,
-               description="Science Lab... why are you meeting here Mr. White?"
+               description="Science Lab!"
                )
     S6 = Space(name="CNS 321",
                sizeCap=8,
@@ -418,7 +417,21 @@ def populate_db():
                          endTime=mh4SEime,
                          review=False)
 
-    db.session.add_all([MH1, MH2, MH3, MH4])
+    MH5 = meetingHistory(uid=4,
+                         spid=S1.id,
+                         date=mh1date,
+                         startTime=mh1STime,
+                         endTime=mh1SEime,
+                         review=False)
+
+    MH6 = meetingHistory(uid=4,
+                         spid=S2.id,
+                         date=mh2date,
+                         startTime=mh2STime,
+                         endTime=mh2SEime,
+                         review=False)
+
+    db.session.add_all([MH1, MH2, MH3, MH4, MH5, MH6])
     db.session.commit()
 
     um1date = date(2023, 10, 10)
