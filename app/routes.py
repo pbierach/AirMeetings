@@ -308,7 +308,6 @@ def reset_db():
 @app.route('/populate_db')
 def populate_db():
     reset_db()
-
     L1 = Location(name="Williams Hall",
                   city="Ithaca",
                   state="NY",
