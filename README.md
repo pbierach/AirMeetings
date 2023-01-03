@@ -1,6 +1,6 @@
 # AirMeetings
-  Patrick Bierach (Ithaca College '24)
-  Joe Guidi (Ithaca College '24)
+  - Patrick Bierach (Ithaca College '24)
+  - Joe Guidi (Ithaca College '24)
 
 # About 
 Flask web-app that allows users to book rooms for upcoming meetings (i.e. website like AirBnB but for meetings) 
